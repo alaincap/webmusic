@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jardín Animado</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to top, #1e3c72, #2a5298);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    /* 🎵 Reproductor personalizado */
+    .player {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .play-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: radial-gradient(circle, #ff4081, #e73370);
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 15px rgba(255, 64, 129, 0.8);
+      animation: pulso 2s infinite;
+      transition: transform 0.2s;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.1);
+    }
+
+    @keyframes pulso {
+      0% { box-shadow: 0 0 15px rgba(255, 64, 129, 0.8); }
+      50% { box-shadow: 0 0 30px rgba(255, 64, 129, 1); }
+      100% { box-shadow: 0 0 15px rgba(255, 64, 129, 0.8); }
+    }
+
+    .song-title {
+      margin-top: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      text-shadow: 0 0 5px #000;
+    }
+
+    .progress-container {
+      margin-top: 8px;
+      width: 250px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #ff4081, #ff9100);
+      transition: width 0.1s;
+    }
+
+    /* Flor central */
+    .contenedor {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 100%;
+    }
+
+    .flor {
+      position: relative;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .flor img {
+    width: 800px; /* tamaño base de la flor */
+    max-width: none; /* quitar el límite máximo */
+    height: auto;
+    animation: crecer 3s ease-in-out infinite alternate;
+}
+
+    @keyframes crecer {
+      from { transform: scale(0.95); }
+      to { transform: scale(1.05); }
+    }
+
+    /* Mensajes */
+    .mensaje {
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-100%);
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+      padding: 600px 300px;
+      border-radius: 800px;
+      font-size: 1000px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      animation: aparecer 3s forwards;
+    }
+
+    @keyframes aparecer {
+      0% { opacity: 0; transform: translate(-50%, 20px) scale(0.8); }
+      20% { opacity: 1; transform: translate(-50%, -10px) scale(1); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -50px) scale(0.8); }
+    }
+
+    /* Botón debajo de la flor */
+    .boton {
+      margin-bottom: 25px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 25px;
+      background: #ffef0a;
+      color: rgb(0, 0, 0);
+      cursor: pointer;
+      transition: background 0.3s;
+      z-index: 5;
+    }
+
+    .boton:hover {
+      background: #e73370;
+    }
+
+    /* Lluvia de flores */
+    .flor-lluvia {
+      position: absolute;
+      top: -100px;
+      width: 40px;
+      height: 40px;
+      pointer-events: none;
+      animation: caer linear forwards;
+    }
+
+    @keyframes caer {
+      from { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      .flor img { width: 160px; }
+      .mensaje { font-size: 14px; }
+      .boton { font-size: 14px; padding: 10px 20px; }
+      .progress-container { width: 180px; }
+    }
+
+    @media (max-width: 480px) {
+      .flor img { width: 120px; }
+      .mensaje { font-size: 12px; padding: 8px 14px; }
+      .boton { font-size: 12px; padding: 8px 16px; }
+      .progress-container { width: 150px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🎵 Reproductor personalizado -->
+  <div class="player">
+    <button id="playBtn" class="play-btn">▶</button>
+    <div class="song-title">NUNCA LO SABRAS</div>
+    <div class="progress-container" id="progressContainer">
+      <div class="progress" id="progress"></div>
+    </div>
+    <audio id="audio">
+      <source src="music/Tú-Nunca-Lo-Sabrás-Daphne-Michelle.mp3" type="audio/mpeg">
+      Tu navegador no soporta audio.
+    </audio>
+  </div>
+
+  <!-- 🌸 Contenedor flor -->
+  <div class="contenedor">
+    <div class="flor" id="flor">
+      <img src="img/flor_tallo.png" alt="Flor con tallo"><br>
+    </div>
+    <br>
+    <button class="boton" onclick="irAOtraPagina()">cancion para ti</button>
+  </div>
+
+  <!-- 🔘 Botón debajo -->
+  
+
+  <script>
+    // 🎵 Reproductor
+    const audio = document.getElementById("audio");
+    const playBtn = document.getElementById("playBtn");
+    const progress = document.getElementById("progress");
+    const progressContainer = document.getElementById("progressContainer");
+
+    playBtn.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play();
+        playBtn.textContent = "⏸";
+      } else {
+        audio.pause();
+        playBtn.textContent = "▶";
+      }
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      const porcentaje = (audio.currentTime / audio.duration) * 100;
+      progress.style.width = porcentaje + "%";
+    });
+
+    progressContainer.addEventListener("click", (e) => {
+      const ancho = progressContainer.clientWidth;
+      const clickX = e.offsetX;
+      audio.currentTime = (clickX / ancho) * audio.duration;
+    });
+
+    // 🌸 Mensajes en flor
+    const mensajes = [
+      "🌸 Hola Ale, eres especial para mi te quiero mucho",
+      "💙 Siempre estaré contigo en las buenas y en las malas",
+      "✨ Eres mi razon de mi luz en este camino",
+      "🌹 Gracias por existir",
+      "💕 Te quiero mucho",
+      "🌟 Nunca te olvidaré",
+      "💌 Este es mi regalo para ti",
+      "🎶 Nuestra canción nunca acaba",
+      "🌼 Siempre a tu lado",
+      "💖 Te amo con todo mi corazón aunque no me perdone"
+    ];
+
+    let indice = 0;
+    const flor = document.getElementById("flor");
+
+    flor.addEventListener("click", () => {
+      const mensaje = document.createElement("div");
+      mensaje.classList.add("mensaje");
+      mensaje.textContent = mensajes[indice];
+      flor.appendChild(mensaje);
+
+      setTimeout(() => {
+        mensaje.remove();
+      }, 3000);
+
+      indice = (indice + 1) % mensajes.length;
+    });
+
+    // 🌸 Lluvia de flores
+    function crearFlorLluvia() {
+      const florLluvia = document.createElement("img");
+      florLluvia.src = "img/flor_lluvia.png";
+      florLluvia.className = "flor-lluvia";
+      florLluvia.style.left = Math.random() * 100 + "vw";
+      florLluvia.style.animationDuration = (Math.random() * 3 + 4) + "s";
+      florLluvia.style.width = (Math.random() * 20 + 30) + "px";
+
+      document.body.appendChild(florLluvia);
+      setTimeout(() => florLluvia.remove(), 7000);
+    }
+
+    setInterval(crearFlorLluvia, 600);
+
+    // 🔘 Redirigir
+    function irAOtraPagina() {
+      window.location.href = "pantalla2.html";
+    }
+  </script>
+
+</body>
+</html>

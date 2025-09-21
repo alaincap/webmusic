@@ -1,0 +1,67 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #141414;
+  overflow: hidden;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.flower {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background-color: #1e6ac7; /* Color azul */
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  animation: move 4s infinite ease-in-out;
+}
+
+#flower1 {
+  top: 10%;
+  left: 20%;
+  animation-delay: 0s;
+}
+
+#flower2 {
+  top: 40%;
+  left: 50%;
+  animation-delay: 1s;
+}
+
+#flower3 {
+  top: 70%;
+  left: 30%;
+  animation-delay: 2s;
+}
+
+@keyframes move {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(20px) rotate(15deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .flower {
+    width: 40px;
+    height: 40px;
+  }
+}
